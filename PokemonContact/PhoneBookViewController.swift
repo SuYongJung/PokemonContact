@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class PhoneBookViewController: UIViewController {
     
@@ -25,7 +26,7 @@ class PhoneBookViewController: UIViewController {
         let randomButton = UIButton()
         randomButton.setTitle("Add Random Image", for: .normal)
         randomButton.setTitleColor(.lightGray, for: .normal)
-        randomButton.addTarget(self, action: #selector(printLog), for: .touchDown)
+        randomButton.addTarget(self, action: #selector(randomImageTapped), for: .touchDown)
         return randomButton
     }()
     let nameTextField: UITextField = {
@@ -88,4 +89,43 @@ class PhoneBookViewController: UIViewController {
     @objc func printLog() {
         print("Add Button Tapped!")
     }
+    
+    @objc private func randomImageTapped() {
+            
+            let randomID = Int.random(in: 1...1000)
+            let urlString = "https://pokeapi.co/api/v2/pokemon/\(randomID)"
+            requestAPI(urlString: urlString) { sprites in
+                DispatchQueue.main.async {
+                    self.randomImageView.kf.setImage(with: URL(string: sprites.front_default)!)
+                }
+            }
+        }
+        
+        func requestAPI(urlString: String, completion: @escaping(Sprites) -> Void ) {
+            guard let url = URL(string: urlString) else { return }
+            let request = URLRequest(url: url)
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in guard let data else { return }
+                let decoder = JSONDecoder()
+                do {
+                    let poketmon = try decoder.decode(PocketmonImageResult.self, from: data)
+                    completion(poketmon.sprites)
+                } catch {
+                    print("JSON Data Error")
+                }
+            }.resume()
+        }
+    
 }
+struct PocketmonImageResult: Decodable {
+    let id: Int
+    let name: String
+    let height: Int
+    let weight: Int
+    let sprites: Sprites
+}
+
+struct Sprites: Decodable {
+    let front_default: String
+}
+

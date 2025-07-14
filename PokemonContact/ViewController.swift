@@ -9,20 +9,7 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
-
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Pokemon Contact"
-        label.font = .systemFont(ofSize: 20, weight: .bold)
-        return label
-    }()
     
-    let addButton: UIButton = {
-        let addButton = UIButton()
-        addButton.setTitle("Add", for: .normal)
-        addButton.setTitleColor(.blue, for: .normal)
-        return addButton
-    }()
     
     let tableView = UITableView()
     
@@ -33,10 +20,8 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(titleLabel)
-        view.addSubview(addButton)
         view.addSubview(tableView)
-        setupUI()
+        
         
         tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.id)
         tableView.dataSource = self
@@ -44,39 +29,13 @@ class ViewController: UIViewController {
         tableView.delegate = self
         
         view.backgroundColor = .white
-        
-        let goToVC2Button = UIButton(type: .system)
-        goToVC2Button.setTitle("Go to VC2", for: .normal)
-        goToVC2Button.addTarget(self, action: #selector(goToVC2), for: .touchUpInside)
-        
-        view.addSubview(goToVC2Button)
-        goToVC2Button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            goToVC2Button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            goToVC2Button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
-        
-    
-    
-    private func setupUI() {
-        titleLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(70)
-        }
-        
-        addButton.snp.makeConstraints { make in
-            make.centerY.equalTo(titleLabel)
-            make.trailing.equalToSuperview().inset(20)
-        }
-        
-        tableView.snp.makeConstraints { make in
-            make.size.equalToSuperview()
-            make.top.equalTo(titleLabel).offset(40)
-        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add",
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(goToVC2))
+        navigationItem.title = "Pokemon Contact"
     }
 }
-
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -106,4 +65,7 @@ extension ViewController: UITableViewDelegate {
         let vc2 = PhoneBookViewController()
         navigationController?.pushViewController(vc2, animated: true)
     }
+    
 }
+
+
